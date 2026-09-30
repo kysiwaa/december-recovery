@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>December Recovery</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 20px;
+    background: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+    color: #3f3933;
+  }
+  .card {
+    max-width: 680px;
+    margin: auto;
+    background: #f7f2eb;
+    border: 1px solid #e5ddd2;
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 12px 35px rgba(70, 55, 40, .08);
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 1.7px;
+    text-transform: uppercase;
+    color: #8b7c6d;
+    font-weight: 700;
+    margin-bottom: 7px;
+  }
+  h1 {
+    font-size: 27px;
+    margin: 0 0 7px;
+    font-weight: 650;
+    letter-spacing: -.5px;
+  }
+  .theme {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #75695e;
+    font-style: italic;
+    margin-bottom: 25px;
+  }
+  .numbers {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    margin-bottom: 10px;
+  }
+  .current {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+  .target {
+    font-size: 13px;
+    color: #81766b;
+  }
+  .bar {
+    height: 12px;
+    background: #e5ddd3;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .fill {
+    height: 100%;
+    width: 0%;
+    background: #8e7862;
+    border-radius: 99px;
+    transition: width .4s ease;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .stat {
+    background: #fffaf4;
+    border: 1px solid #e8dfd4;
+    border-radius: 15px;
+    padding: 14px;
+  }
+  .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+    color: #95887b;
+    margin-bottom: 5px;
+  }
+  .value {
+    font-size: 17px;
+    font-weight: 650;
+  }
+  .status {
+    margin-top: 17px;
+    padding: 13px 15px;
+    border-radius: 14px;
+    background: #eee6dc;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .milestone {
+    margin-top: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding-top: 18px;
+    border-top: 1px solid #e4dbd0;
+  }
+  .milestone-title {
+    font-size: 13px;
+    font-weight: 650;
+  }
+  .pill {
+    font-size: 12px;
+    font-weight: 700;
+    background: #3f3933;
+    color: #fffaf4;
+    padding: 8px 11px;
+    border-radius: 99px;
+    white-space: nowrap;
+  }
+  .footer {
+    margin-top: 18px;
+    font-size: 10px;
+    color: #9a8e83;
+    text-align: right;
+  }
+  @media (max-width: 520px) {
+    .card { padding: 21px; border-radius: 19px; }
+    .stats { grid-template-columns: 1fr; }
+    h1 { font-size: 23px; }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="eyebrow">December Recovery</div>
+  <h1>Pick Up Where I Left Off</h1>
+  <div class="theme">“Not starting again. Picking up where I left off.”</div>
+
+  <div class="numbers">
+    <div class="current" id="current">20K</div>
+    <div class="target">Target: <strong>25K</strong> followers</div>
+  </div>
+
+  <div class="bar"><div class="fill" id="fill"></div></div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="label">Progress</div>
+      <div class="value" id="percent">0%</div>
+    </div>
+    <div class="stat">
+      <div class="label">Remaining</div>
+      <div class="value" id="remaining">5K</div>
+    </div>
+    <div class="stat">
+      <div class="label">Days left</div>
+      <div class="value" id="days">—</div>
+    </div>
+  </div>
+
+  <div class="status" id="status">Status: On track to work through the December recovery target.</div>
+
+  <div class="milestone">
+    <div>
+      <div class="label">Secondary milestone</div>
+      <div class="milestone-title">Paid brand deal</div>
+    </div>
+    <div class="pill">Brand Deal: 0/1 secured</div>
+  </div>
+
+  <div class="footer">Updated automatically from the values in this card</div>
+</div>
+
+<script>
+  // UPDATE THESE VALUES when your numbers change:
+  const START = 20000;
+  const CURRENT = 20000;
+  const TARGET = 25000;
+  const DEADLINE = new Date("2026-12-31T23:59:59");
+
+  const growthGap = TARGET - START;
+  const gained = Math.max(0, CURRENT - START);
+  const percent = Math.min(100, Math.max(0, (gained / growthGap) * 100));
+  const remaining = Math.max(0, TARGET - CURRENT);
+
+  const now = new Date();
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const daysLeft = Math.max(0, Math.ceil((DEADLINE - now) / msPerDay));
+
+  document.getElementById("current").textContent =
+    CURRENT >= 1000 ? (CURRENT / 1000).toFixed(CURRENT % 1000 ? 1 : 0) + "K" : CURRENT;
+  document.getElementById("percent").textContent = Math.round(percent) + "%";
+  document.getElementById("remaining").textContent =
+    remaining >= 1000 ? (remaining / 1000).toFixed(remaining % 1000 ? 1 : 0) + "K" : remaining;
+  document.getElementById("days").textContent = daysLeft;
+  document.getElementById("fill").style.width = percent + "%";
+
+  const status = document.getElementById("status");
+  if (CURRENT >= TARGET) {
+    status.textContent = "Status: Target reached. Use the remaining time to maintain momentum.";
+  } else {
+    const today = new Date();
+    const yearStart = new Date("2026-12-01T00:00:00");
+    const totalDays = Math.max(1, (DEADLINE - yearStart) / msPerDay);
+    const elapsed = Math.min(totalDays, Math.max(0, (today - yearStart) / msPerDay));
+    const expected = (elapsed / totalDays) * 100;
+
+    if (percent > expected + 5) {
+      status.textContent = "Status: Ahead of the December pace. Keep the system moving.";
+    } else if (percent < expected - 5) {
+      status.textContent = "Status: Behind the December pace. Focus on consistent output.";
+    } else {
+      status.textContent = "Status: On track. Keep the December recovery moving consistently.";
+    }
+  }
+</script>
+</body>
+</html>
